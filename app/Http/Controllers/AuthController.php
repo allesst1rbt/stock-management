@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\DTOs\UserDTO;
+use App\Http\Requests\CreateUser;
+use App\Http\Requests\UpdateUser;
+use App\Http\Services\UserService;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -11,19 +15,17 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 
 class AuthController extends Controller
 {
-    public function register(Request $request)
+    public function __construct( private $UserService = New UserService())
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed',
-        ]);
-
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+    }
+    public function register(CreateUser $request)
+    {
+        $userDTO = new UserDTO(
+            $request->input('name'),
+            $request->input('email'),
+            $request->input('password')
+        );
+        $user = $this->UserService->createUser($userDTO);
 
         try {
             $token = JWTAuth::fromUser($user);
@@ -79,11 +81,18 @@ class AuthController extends Controller
         }
     }
 
-    public function updateUser(Request $request)
+    public function updateUser(UpdateUser $request)
     {
         try {
             $user = Auth::user();
-            $user->update($request->only(['name', 'email']));
+            if (!$user) {
+                return response()->json(['error' => 'User not found'], 404);
+            }
+            $userDTO = new UserDTO(
+                $request->input('name'),
+                $request->input('email'),
+            );
+            $this->UserService->updateUser($user->id, $userDTO);
             return response()->json($user);
         } catch (JWTException $e) {
             return response()->json(['error' => 'Failed to update user'], 500);
