@@ -31,4 +31,20 @@ class ProductController extends Controller
             ], 500);
         }
     }
+    public function index(): JsonResponse
+    {
+        try {
+            $products = $this->productService->getProducts();
+
+            return response()->json([
+                'message' => 'Products retrieved successfully',
+                'data' => $products->toArray()
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Failed to retrieve products',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

@@ -14,5 +14,9 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('/user', [AuthController::class, 'getUser']);
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::put('/user', [AuthController::class, 'updateUser']);
+        Route::resources([
+            'categories' => \App\Http\Controllers\CategoryController::class,
+            'products' => \App\Http\Controllers\ProductController::class,
+        ]);
     });
 });

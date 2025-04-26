@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\DTOs\PaginatedCollectionDTO;
 use App\DTOs\ProductDTO;
 use App\DTOs\CollectionDTO;
 use App\Models\Product;
@@ -10,10 +11,16 @@ use Exception;
 
 class ProductService
 {
-    public function getAllProducts(): CollectionDTO
+    public function getProducts(): CollectionDTO
     {
         $products = Product::with('category')->get()->toArray();
         return CollectionDTO::fromProducts($products);
+    }
+
+    public function getPaginatedProducts(int $perPage): PaginatedCollectionDTO
+    {
+        $products = Product::with('category')->paginate($perPage)->toArray();
+        return PaginatedCollectionDTO::fromProducts($products["data"], $perPage,$products["current_page"] );
     }
 
     public function createProduct(ProductDTO $productDTO): ProductDTO

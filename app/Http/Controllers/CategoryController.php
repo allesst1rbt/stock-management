@@ -31,4 +31,21 @@ class CategoryController extends Controller
             ], 500);
         }
     }
+
+    public function index(): JsonResponse
+    {
+        try {
+            $categories = $this->categoryService->getCategories();
+
+            return response()->json([
+                'message' => 'Categories retrieved successfully',
+                'data' => $categories
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Failed to retrieve Categories',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
