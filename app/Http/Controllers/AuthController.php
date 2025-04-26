@@ -3,12 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\DTOs\UserDTO;
-use App\Http\Requests\CreateUser;
-use App\Http\Requests\UpdateUser;
-use App\Http\Services\UserService;
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
+use App\Services\UserService;
 use Illuminate\Http\Request;
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -18,7 +16,7 @@ class AuthController extends Controller
     public function __construct( private $UserService = New UserService())
     {
     }
-    public function register(CreateUser $request)
+    public function register(StoreUserRequest $request)
     {
         $userDTO = new UserDTO(
             $request->input('name'),
@@ -81,7 +79,7 @@ class AuthController extends Controller
         }
     }
 
-    public function updateUser(UpdateUser $request)
+    public function updateUser(UpdateUserRequest $request)
     {
         try {
             $user = Auth::user();
