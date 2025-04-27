@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Http\Middleware\JwtWebMiddleware;
+use App\Http\Middleware\TokenToSession;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -11,7 +13,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(TokenToSession::class, function ($app) {
+            return new TokenToSession();
+        });
+        $this->app->bind(JwtWebMiddleware::class, function ($app) {
+            return new JwtWebMiddleware();
+        });
     }
 
     /**

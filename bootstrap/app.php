@@ -1,6 +1,10 @@
 <?php
 
 use App\Http\Middleware\JwtMiddleware;
+use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\JwtWebMiddleware;
+use App\Http\Middleware\LogRequestMiddleware;
+use App\Http\Middleware\TokenToSession;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -14,7 +18,11 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
-            'jwt' => JwtMiddleware::class
+            'jwt' => JwtMiddleware::class,
+            HandleInertiaRequests::class,
+            LogRequestMiddleware::class,
+            'token'=> TokenToSession::class,
+            'jwt:web'=> JwtWebMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

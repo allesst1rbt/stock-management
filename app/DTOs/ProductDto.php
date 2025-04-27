@@ -28,7 +28,6 @@ class ProductDTO
             category_id: $data['category_id'],
             category: isset($data['category']) ? CategoryDTO::fromArray($data['category']) : null,
             sku: $data['sku'],
-            active: $data['active'] ?? true,
             id: $data['id'] ?? null,
             created_at: $data['created_at'] ?? null,
             updated_at: $data['updated_at'] ?? null
@@ -45,7 +44,6 @@ class ProductDTO
             'stock_quantity' => $this->stock_quantity,
             'category_id' => $this->category_id,
             'sku' => $this->sku,
-            'active' => $this->active,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at
         ], fn($value) => !is_null($value));

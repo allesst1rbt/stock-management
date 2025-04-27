@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Exception;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UserService
 {
@@ -39,28 +40,46 @@ class UserService
         return UserDTO::fromArray($user->toArray());
     }
 
-    /**
-     * Create new user
-     *
-     * @param UserDTO $userDTO
-     * @return UserDTO
-     * @throws Exception
-     */
-    public function createUser(UserDTO $userDTO): UserDTO
+
+    public function register(UserDTO $userDTO)
     {
         DB::beginTransaction();
         try {
+
             $userData = $userDTO->toArray();
             $userData['password'] = Hash::make($userData['password']);
 
             $user = User::create($userData);
-            
             DB::commit();
-            
-            return UserDTO::fromArray($user->toArray());
+
+            $token = JWTAuth::fromUser($user); 
+
+            return [
+                'token' => $token,
+                'user' => UserDTO::fromArray($user->toArray()) 
+            ];
         } catch (Exception $e) {
             DB::rollBack();
             throw new Exception('Failed to create user: ' . $e->getMessage());
+        }
+    }
+
+    public function login(array $credentials)
+    {
+        try {
+            if (!$token = JWTAuth::attempt($credentials)) {
+                throw new Exception('Invalid credentials');
+            }
+
+            $user = auth()->user();
+            
+            return [
+                'token' => $token,
+                'user' => UserDTO::fromArray($user->toArray()),
+                'expires_in' => auth('api')->factory()->getTTL() * 60,
+            ];
+        } catch (Exception $e) {
+            throw new Exception('Failed to login: ' . $e->getMessage());
         }
     }
 

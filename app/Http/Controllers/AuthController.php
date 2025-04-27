@@ -6,53 +6,48 @@ use App\DTOs\UserDTO;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Services\UserService;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 
 class AuthController extends Controller
 {
-    public function __construct( private $UserService = New UserService())
+    public function __construct( private readonly UserService $UserService)
     {
     }
     public function register(StoreUserRequest $request)
     {
+        $request->validated();
         $userDTO = new UserDTO(
             $request->input('name'),
             $request->input('email'),
+            $request->input('roles'),
             $request->input('password')
         );
-        $user = $this->UserService->createUser($userDTO);
-
         try {
-            $token = JWTAuth::fromUser($user);
-        } catch (JWTException $e) {
-            return response()->json(['error' => 'Could not create token'], 500);
+            $return = $this->UserService->register($userDTO);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Could not create User', 'message'=> $e], 500);
         }
-
-        return response()->json([
-            'token' => $token,
-            'user' => $user,
-        ], 201);
+        return response()->json($return, 201);
     }
 
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
-
         try {
-            if (!$token = JWTAuth::attempt($credentials)) {
-                return response()->json(['error' => 'Invalid credentials'], 401);
-            }
-        } catch (JWTException $e) {
+
+
+            $return = $this->UserService->login($credentials);
+
+        } catch (Exception $e) {
             return response()->json(['error' => 'Could not create token'], 500);
         }
 
-        return response()->json([
-            'token' => $token,
-            'expires_in' => auth('api')->factory()->getTTL() * 60,
-        ]);
+        return response()->json($return);
     }
 
     public function logout()

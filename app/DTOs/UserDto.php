@@ -7,6 +7,7 @@ class UserDTO
     public function __construct(
         public readonly string $name,
         public readonly string $email,
+        public readonly string $roles,
         public readonly ?string $password = null,
         public readonly ?int $id = null
     ) {}
@@ -16,6 +17,7 @@ class UserDTO
         return new self(
             name: $data['name'],
             email: $data['email'],
+            roles: $data['roles'],
             password: $data['password'] ?? null,
             id: $data['id'] ?? null
         );
@@ -24,10 +26,10 @@ class UserDTO
     public function toArray(): array
     {
         return array_filter([
-            'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
             'password' => $this->password,
+            'roles' => $this->roles
         ], fn($value) => !is_null($value));
     }
 }
