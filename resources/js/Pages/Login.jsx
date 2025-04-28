@@ -35,7 +35,7 @@ export default function Login() {
         const data = await response.json();
         sessionStorage.setItem('token', data.token);
         sessionStorage.setItem('user', JSON.stringify(data.user));
-        router.visit('/');
+        router.visit('/dashboard');
       }
     } catch (error) {
       setErrors({ general: 'Unexpected error. Please try again.' });

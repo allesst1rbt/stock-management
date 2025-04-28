@@ -13,7 +13,7 @@ class LogRequestMiddleware
             'url' => $request->fullUrl(),
             'method' => $request->method(),
             'headers' => $request->headers->all(),
-            'data' => $request->all()
+            'data' => $request->all(),
         ]);
 
         return $next($request);

@@ -21,8 +21,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'jwt' => JwtMiddleware::class,
             HandleInertiaRequests::class,
             LogRequestMiddleware::class,
-            'token'=> TokenToSession::class,
-            'jwt:web'=> JwtWebMiddleware::class,
+            'token' => TokenToSession::class,
+            'jwt:web' => JwtWebMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

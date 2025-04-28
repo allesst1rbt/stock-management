@@ -30,7 +30,7 @@ class CategoryDTO
             'name' => $this->name,
             'description' => $this->description,
             'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at
-        ], fn($value) => !is_null($value));
+            'updated_at' => $this->updated_at,
+        ], fn ($value) => ! is_null($value));
     }
 }

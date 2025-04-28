@@ -29,7 +29,7 @@ class UserDTO
             'name' => $this->name,
             'email' => $this->email,
             'password' => $this->password,
-            'roles' => $this->roles
-        ], fn($value) => !is_null($value));
+            'roles' => $this->roles,
+        ], fn ($value) => ! is_null($value));
     }
 }

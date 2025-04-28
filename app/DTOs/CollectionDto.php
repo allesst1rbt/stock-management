@@ -4,9 +4,6 @@ namespace App\DTOs;
 
 class CollectionDTO
 {
-    /**
-     * @var array
-     */
     private array $items;
 
     public function __construct(array $items)
@@ -18,7 +15,7 @@ class CollectionDTO
     {
         return new self(
             array_map(
-                fn(array $product) => ProductDTO::fromArray($product),
+                fn (array $product) => ProductDTO::fromArray($product),
                 $products
             )
         );
@@ -28,7 +25,7 @@ class CollectionDTO
     {
         return new self(
             array_map(
-                fn(array $category) => CategoryDTO::fromArray($category),
+                fn (array $category) => CategoryDTO::fromArray($category),
                 $categories
             )
         );
@@ -37,7 +34,7 @@ class CollectionDTO
     public function toArray(): array
     {
         return array_map(
-            fn($item) => $item->toArray(),
+            fn ($item) => $item->toArray(),
             $this->items
         );
     }

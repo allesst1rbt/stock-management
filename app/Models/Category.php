@@ -9,6 +9,7 @@ class Category extends Model
 {
     /** @use HasFactory<\Database\Factories\CategoriesFactory> */
     use HasFactory;
+
     protected $fillable = ['id', 'name', 'description', 'created_at', 'updated_at'];
 
     public function products()

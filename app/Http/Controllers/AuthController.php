@@ -9,15 +9,13 @@ use App\Services\UserService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 
 class AuthController extends Controller
 {
-    public function __construct( private readonly UserService $UserService)
-    {
-    }
+    public function __construct(private readonly UserService $UserService) {}
+
     public function register(StoreUserRequest $request)
     {
         $request->validated();
@@ -30,8 +28,9 @@ class AuthController extends Controller
         try {
             $return = $this->UserService->register($userDTO);
         } catch (Exception $e) {
-            return response()->json(['error' => 'Could not create User', 'message'=> $e], 500);
+            return response()->json(['error' => 'Could not create User', 'message' => $e], 500);
         }
+
         return response()->json($return, 201);
     }
 
@@ -65,9 +64,10 @@ class AuthController extends Controller
     {
         try {
             $user = Auth::user();
-            if (!$user) {
+            if (! $user) {
                 return response()->json(['error' => 'User not found'], 404);
             }
+
             return response()->json($user);
         } catch (JWTException $e) {
             return response()->json(['error' => 'Failed to fetch user profile'], 500);
@@ -78,14 +78,16 @@ class AuthController extends Controller
     {
         try {
             $user = Auth::user();
-            if (!$user) {
+            if (! $user) {
                 return response()->json(['error' => 'User not found'], 404);
             }
             $userDTO = new UserDTO(
                 $request->input('name'),
                 $request->input('email'),
+                $request->input('roles'),
             );
             $this->UserService->updateUser($user->id, $userDTO);
+
             return response()->json($user);
         } catch (JWTException $e) {
             return response()->json(['error' => 'Failed to update user'], 500);

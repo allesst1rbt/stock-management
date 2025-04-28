@@ -8,9 +8,9 @@ class ProductDTO
         public readonly string $name,
         public readonly string $description,
         public readonly float $price,
-        public readonly int $stock_quantity,
+        public readonly int $quantity,
         public readonly int $category_id,
-        public readonly ?CategoryDTO $category = null,
+        public readonly ?CategoryDTO $category,
         public readonly string $sku,
         public readonly bool $active = true,
         public readonly ?int $id = null,
@@ -24,7 +24,7 @@ class ProductDTO
             name: $data['name'],
             description: $data['description'],
             price: $data['price'],
-            stock_quantity: $data['stock_quantity'],
+            quantity: $data['quantity'],
             category_id: $data['category_id'],
             category: isset($data['category']) ? CategoryDTO::fromArray($data['category']) : null,
             sku: $data['sku'],
@@ -41,12 +41,12 @@ class ProductDTO
             'name' => $this->name,
             'description' => $this->description,
             'price' => $this->price,
-            'stock_quantity' => $this->stock_quantity,
+            'quantity' => $this->quantity,
             'category_id' => $this->category_id,
             'sku' => $this->sku,
             'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at
-        ], fn($value) => !is_null($value));
+            'updated_at' => $this->updated_at,
+        ], fn ($value) => ! is_null($value));
 
         if ($this->category) {
             $data['category'] = $this->category->toArray();

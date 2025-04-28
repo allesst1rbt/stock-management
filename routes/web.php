@@ -8,11 +8,11 @@ Route::get('/login', function () {
 })->name('login');
 
 Route::middleware(['token', 'jwt:web'])->group(function () {
-    Route::get('/', fn () => Inertia::render('Dashboard'))->name('dashboard');
+    Route::get('/dashboard', fn () => Inertia::render('Dashboard'))->name('dashboard');
     Route::prefix('dashboard')->group(function () {
         Route::get('/stocks', fn () => Inertia::render('Stocks'));
         Route::get('/categories', fn () => Inertia::render('Categories'));
         Route::get('/users', fn () => Inertia::render('Users'));
     });
-   
+
 });
