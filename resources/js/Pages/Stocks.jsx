@@ -301,9 +301,9 @@ export default function Stocks() {
             </table>
           </div>
 
-          {products.meta && (
+          {products.data.links && (
             <div className="flex justify-center mt-4 space-x-2">
-              {products.meta.links.map((link, index) => (
+              {products.data.links.map((link, index) => (
                 <button
                   key={index}
                   disabled={!link.url}

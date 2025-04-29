@@ -1,4 +1,4 @@
-FROM php:8.4.5-fpm
+FROM php:8.3-fpm
 RUN curl -sL https://deb.nodesource.com/setup_18.x -o nodesource_setup.sh
 RUN ["sh",  "./nodesource_setup.sh"]
 RUN apt-get update && apt-get install -y git nodejs  openssl  unzip libmcrypt-dev  libzip-dev libxml2-dev libonig-dev  \
