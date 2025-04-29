@@ -31,7 +31,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test Operator',
             'email' => 'test@Operator.com',
             'password' => bcrypt('passwordOperator'),
-            'roles' => 'Operator',
+            'roles' => 'operator',
         ]);
 
 
