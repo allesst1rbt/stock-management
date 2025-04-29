@@ -32,4 +32,5 @@ class UserDTO
             'roles' => $this->roles,
         ], fn ($value) => ! is_null($value));
     }
+    
 }

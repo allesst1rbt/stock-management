@@ -52,4 +52,5 @@ class PaginatedCollectionDTO
     {
         return $this->items;
     }
+    
 }

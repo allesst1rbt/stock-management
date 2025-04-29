@@ -43,4 +43,5 @@ class CollectionDTO
     {
         return $this->items;
     }
+    
 }
