@@ -33,5 +33,4 @@ class CategoryDTO
             'updated_at' => $this->updated_at,
         ], fn ($value) => ! is_null($value));
     }
-    
 }

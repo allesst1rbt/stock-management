@@ -14,9 +14,9 @@ class ProductSeeder extends Seeder
     public function run(): void
     {
         $Category = Category::find(1);
-        Product::factory(6, [ "category_id"=>$Category->id])->create();
+        Product::factory(6, ['category_id' => $Category->id])->create();
         $Category = Category::find(2);
 
-        Product::factory( 5, [ "category_id"=>$Category->id])->create();
+        Product::factory(5, ['category_id' => $Category->id])->create();
     }
 }

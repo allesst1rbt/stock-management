@@ -53,5 +53,4 @@ class ProductDTO
 
         return $data;
     }
-    
 }
