@@ -18,6 +18,27 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
+            'password' => bcrypt('passwordUser'),
+            'roles' => 'user',
         ]);
+        User::factory()->create([
+            'name' => 'Test Admin',
+            'email' => 'test@Admin.com',
+            'password' => bcrypt('passwordAdmin'),
+            'roles' => 'admin',
+        ]);
+        User::factory()->create([
+            'name' => 'Test Operator',
+            'email' => 'test@Operator.com',
+            'password' => bcrypt('passwordOperator'),
+            'roles' => 'Operator',
+        ]);
+
+
+        $this->call([
+            CategorySeeder::class,
+            ProductSeeder::class,
+        ]);
+
     }
 }

@@ -16,7 +16,7 @@ class CategoryDTO
     {
         return new self(
             name: $data['name'],
-            description: $data['description']?? null,
+            description: $data['description'] ?? null,
             id: $data['id'] ?? null,
             created_at: $data['created_at'] ?? null,
             updated_at: $data['updated_at'] ?? null

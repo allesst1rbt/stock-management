@@ -4,7 +4,7 @@ namespace App\DTOs;
 
 class PaginatedCollectionDTO
 {
-    public function __construct(private array $items, private ?int $limit = 10, private ?int $page = 1, private ?int $total = 0 , private ?array $links = []) {}
+    public function __construct(private array $items, private ?int $limit = 10, private ?int $page = 1, private ?int $total = 0, private ?array $links = []) {}
 
     public static function fromProducts(array $products, ?int $limit, ?int $page, ?int $total, ?array $links): self
     {
@@ -30,7 +30,7 @@ class PaginatedCollectionDTO
             ),
             limit: $limit,
             page: $page,
-            total: $total, 
+            total: $total,
             links: $links
         );
     }

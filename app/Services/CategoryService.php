@@ -25,11 +25,12 @@ class CategoryService
         ?string $sortOrder,
         ?int $page = 1
     ): PaginatedCollectionDTO {
-        $query= Category::query();
+        $query = Category::query();
         if ($name) {
             $query->where('name', 'like', "%{$name}%");
         }
         $categories = $query->orderBy($sortBy, $sortOrder)->paginate(perPage: $perPage, page: $page)->toArray();
+
         return PaginatedCollectionDTO::fromCategories($categories['data'], $categories['per_page'], $categories['current_page'], $categories['total'], $categories['links']);
     }
 
@@ -68,7 +69,9 @@ class CategoryService
         DB::beginTransaction();
         try {
             $category = Category::findOrFail($id);
+            $category->products->delete();
             $category->delete();
+
 
             DB::commit();
         } catch (Exception $e) {

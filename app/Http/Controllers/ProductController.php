@@ -10,8 +10,6 @@ use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use Exception;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
-
 
 class ProductController extends Controller
 {
@@ -91,7 +89,7 @@ class ProductController extends Controller
         }
     }
 
-    public function update( UpdateProductRequest $request, int $id): JsonResponse
+    public function update(UpdateProductRequest $request, int $id): JsonResponse
     {
         if ($this->validateRole('user')) {
             return response()->json([

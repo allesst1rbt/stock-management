@@ -43,7 +43,7 @@ class CategoryController extends Controller
 
         try {
             $categoryDto = CategoryDTO::fromArray($request->validated());
-            $category = $this->categoryService->updateCategory($id , $categoryDto);
+            $category = $this->categoryService->updateCategory($id, $categoryDto);
 
             return response()->json([
                 'message' => 'Category created successfully',
@@ -97,15 +97,13 @@ class CategoryController extends Controller
         }
     }
 
-    private function validateAdmin(): bool | JsonResponse
+    private function validateAdmin(): bool|JsonResponse
     {
         $user = Auth::user();
-        if ($user->roles  !== "admin") {
-            abort(403,'Doesnt have necessary requirements');
+        if ($user->roles  !== 'admin') {
+            abort(403, 'Doesnt have necessary requirements');
         }
 
         return true;
     }
-
-  
 }

@@ -25,14 +25,13 @@ class ProductFactory extends Factory
             'quantity' => $this->faker->numberBetween(0, 100),
             'category_id' => Category::factory()->create()->id,
             'sku' => $this->generateSku(),
-          
+
         ];
-    
+
     }
 
     protected function generateSku(): string
     {
-        return strtoupper(Str::random(2) . $this->faker->numberBetween(1000, 9999));
+        return strtoupper(Str::random(2).$this->faker->numberBetween(1000, 9999));
     }
-
 }

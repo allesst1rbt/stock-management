@@ -29,5 +29,4 @@ class GetCategoriesRequest extends FormRequest
             'sort_order' => 'nullable|in:asc,desc',
         ];
     }
-
 }

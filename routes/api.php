@@ -17,8 +17,8 @@ Route::prefix('v1')->group(function () {
         Route::put('/user', [AuthController::class, 'updateUser']);
         Route::resources([
             'categories' => \App\Http\Controllers\CategoryController::class,
-            'products' => \App\Http\Controllers\ProductController::class
+            'products' => \App\Http\Controllers\ProductController::class,
         ]);
-       
+
     });
 });

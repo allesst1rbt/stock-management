@@ -5,13 +5,13 @@ namespace App\DTOs;
 class ProductDTO
 {
     public function __construct(
-        public readonly ?string $name= null,
-        public readonly ?string $description= null,
-        public readonly ?float $price= null,
-        public readonly ?int $quantity= null,
-        public readonly ?int $category_id= null,
-        public readonly ?CategoryDTO $category= null,
-        public readonly ?string $sku= null,
+        public readonly ?string $name = null,
+        public readonly ?string $description = null,
+        public readonly ?float $price = null,
+        public readonly ?int $quantity = null,
+        public readonly ?int $category_id = null,
+        public readonly ?CategoryDTO $category = null,
+        public readonly ?string $sku = null,
         public readonly ?int $id = null,
         public readonly ?string $created_at = null,
         public readonly ?string $updated_at = null
@@ -20,13 +20,13 @@ class ProductDTO
     public static function fromArray(array $data): self
     {
         return new self(
-            name: $data['name']?? null,
-            description: $data['description']?? null,
-            price: $data['price']?? null,
-            quantity: $data['quantity']?? null,
-            category_id: $data['category_id']?? null,
+            name: $data['name'] ?? null,
+            description: $data['description'] ?? null,
+            price: $data['price'] ?? null,
+            quantity: $data['quantity'] ?? null,
+            category_id: $data['category_id'] ?? null,
             category: isset($data['category']) ? CategoryDTO::fromArray($data['category']) : null,
-            sku: $data['sku']?? null,
+            sku: $data['sku'] ?? null,
             id: $data['id'] ?? null,
             created_at: $data['created_at'] ?? null,
             updated_at: $data['updated_at'] ?? null
@@ -50,6 +50,7 @@ class ProductDTO
         if ($this->category) {
             $data['category'] = $this->category->toArray();
         }
+
         return $data;
     }
 }

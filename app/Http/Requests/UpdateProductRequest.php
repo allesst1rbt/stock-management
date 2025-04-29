@@ -22,13 +22,13 @@ class UpdateProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-                'name' => 'nullable|string|max:255|regex:/^[\w\s\-\.,]+$/',
-                'category_id' => 'nullable|integer|exists:categories,id',
-                'price' => 'nullable|numeric|min:0|decimal:0,2',
-                'quantity' => 'nullable|integer|min:0',
-                'page' => 'nullable|integer|min:1',
-                'sku' => 'nullable|string|max:50|unique:products',
-                'description'=> 'nullable|string|max:255|regex:/^[\w\s\-\.,]+$/'
+            'name' => 'nullable|string|max:255|regex:/^[\w\s\-\.,]+$/',
+            'category_id' => 'nullable|integer|exists:categories,id',
+            'price' => 'nullable|numeric|min:0|decimal:0,2',
+            'quantity' => 'nullable|integer|min:0',
+            'page' => 'nullable|integer|min:1',
+            'sku' => 'nullable|string|max:50|unique:products',
+            'description' => 'nullable|string|max:255|regex:/^[\w\s\-\.,]+$/',
         ];
     }
 }
