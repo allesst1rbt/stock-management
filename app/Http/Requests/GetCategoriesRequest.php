@@ -22,11 +22,12 @@ class GetCategoriesRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'search' => 'nullable|string|max:255|regex:/^[\w\s\-\.,]+$/',
+            'name' => 'nullable|string|max:255|regex:/^[\w\s\-\.,]+$/',
             'per_page' => 'nullable|integer|min:1|max:100',
             'page' => 'nullable|integer|min:1',
             'sort_by' => 'nullable|in:name,created_at',
             'sort_order' => 'nullable|in:asc,desc',
         ];
     }
+
 }

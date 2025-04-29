@@ -19,21 +19,18 @@ class CategoryService
     }
 
     public function getCategoriesPaginated(
-        string $name,
-        int $perPage,
-        string $sortBy,
-        string $sortOrder,
-        int $page = 1
+        ?string $name,
+        ?int $perPage,
+        ?string $sortBy,
+        ?string $sortOrder,
+        ?int $page = 1
     ): PaginatedCollectionDTO {
-        $query = Category::query();
-
+        $query= Category::query();
         if ($name) {
-            $query->where('name', 'like', '%'.addcslashes($name, '%_').'%');
+            $query->where('name', 'like', "%{$name}%");
         }
-
         $categories = $query->orderBy($sortBy, $sortOrder)->paginate(perPage: $perPage, page: $page)->toArray();
-
-        return PaginatedCollectionDTO::fromCategories($categories['data'], $categories['per_page'], $categories['current_page'], $categories['total']);
+        return PaginatedCollectionDTO::fromCategories($categories['data'], $categories['per_page'], $categories['current_page'], $categories['total'], $categories['links']);
     }
 
     public function createCategory(CategoryDTO $categoryDTO): CategoryDTO
@@ -63,6 +60,20 @@ class CategoryService
         } catch (Exception $e) {
             DB::rollBack();
             throw new Exception('Failed to update category: '.$e->getMessage());
+        }
+    }
+
+    public function deleteCategory(int $id): void
+    {
+        DB::beginTransaction();
+        try {
+            $category = Category::findOrFail($id);
+            $category->delete();
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new Exception('Failed to delete category: '.$e->getMessage());
         }
     }
 }

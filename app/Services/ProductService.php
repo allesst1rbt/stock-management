@@ -19,11 +19,11 @@ class ProductService
     }
 
     public function getProductsPaginated(
-        array $filters,
-        int $perPage,
-        string $sortBy,
-        string $sortOrder,
-        int $page = 1
+        ?array $filters,
+        ?int $perPage,
+        ?string $sortBy,
+        ?string $sortOrder,
+        ?int $page = 1
     ): PaginatedCollectionDTO {
         $query = Product::with('category')
             ->when(
@@ -41,10 +41,9 @@ class ProductService
                     fn ($catQ) => $catQ->where('name', 'like', '%'.addcslashes($filters['category'], '%_').'%')
                 )
             );
-
         $products = $query->orderBy($sortBy, $sortOrder)->paginate(perPage: $perPage, page: $page)->toArray();
 
-        return PaginatedCollectionDTO::fromProducts($products['data'], $products['per_page'], $products['current_page'], $products['total']);
+        return PaginatedCollectionDTO::fromProducts($products['data'], $products['per_page'], $products['current_page'], $products['total'], $products['links']);
     }
 
     public function getProductById(int $id): ProductDTO

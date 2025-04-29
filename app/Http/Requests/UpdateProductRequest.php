@@ -11,7 +11,7 @@ class UpdateProductRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,12 +22,13 @@ class UpdateProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['nullable', 'string', 'max:255', 'unique:products'],
-            'description' => ['nullable', 'string', 'max:1000'],
-            'price' => ['nullable', 'numeric', 'min:0', 'decimal:0,2'],
-            'quantity' => ['nullable', 'integer', 'min:0'],
-            'category_id' => ['nullable', 'integer', 'exists:categories,id'],
-            'sku' => ['nullable', 'string', 'max:50', 'unique:products'],
+                'name' => 'nullable|string|max:255|regex:/^[\w\s\-\.,]+$/',
+                'category_id' => 'nullable|integer|exists:categories,id',
+                'price' => 'nullable|numeric|min:0|decimal:0,2',
+                'quantity' => 'nullable|integer|min:0',
+                'page' => 'nullable|integer|min:1',
+                'sku' => 'nullable|string|max:50|unique:products',
+                'description'=> 'nullable|string|max:255|regex:/^[\w\s\-\.,]+$/'
         ];
     }
 }

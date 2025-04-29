@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import Dashboard from './Dashboard';
 
 export default function Categories() {
-  const [categories, setCategories] = useState({ data: [], meta: null });
+  const [categories, setCategories] = useState({ data: {items:[] , links: []}, meta: null });
   const [filters, setFilters] = useState({
     name: '',
     description: '',
@@ -123,22 +123,6 @@ export default function Categories() {
             onChange={handleFilterChange}
             className="p-2 border rounded"
           />
-          <input
-            type="number"
-            name="price"
-            placeholder="Filter by price"
-            value={filters.price}
-            onChange={handleFilterChange}
-            className="p-2 border rounded"
-          />
-          <input
-            type="text"
-            name="category"
-            placeholder="Filter by category"
-            value={filters.category}
-            onChange={handleFilterChange}
-            className="p-2 border rounded"
-          />
           <button
             onClick={handleCreate}
             className="bg-blue-500 text-white rounded px-4 py-2"
@@ -162,8 +146,8 @@ export default function Categories() {
                 </tr>
               </thead>
               <tbody>
-                {categories.data.length > 0 ? (
-                  categories.data.map((categorie) => (
+                {categories.data.items.length > 0 ? (
+                  categories.data.items.map((categorie) => (
                     <tr key={categorie.id} className="border-t">
                       <td className="px-4 py-2">{categorie.name}</td>
                       <td className="px-4 py-2">{categorie.description || '—'}</td>
@@ -197,9 +181,9 @@ export default function Categories() {
             </table>
           </div>
 
-          {categories.meta && (
+          {categories.data.links && (
             <div className="flex justify-center mt-4 space-x-2">
-              {categorie.meta.links.map((link, index) => (
+              {categories.data.links.map((link, index) => (
                 <button
                   key={index}
                   disabled={!link.url}

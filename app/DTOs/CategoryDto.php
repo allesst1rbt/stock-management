@@ -6,7 +6,7 @@ class CategoryDTO
 {
     public function __construct(
         public readonly string $name,
-        public readonly string $description,
+        public readonly ?string $description,
         public readonly ?int $id = null,
         public readonly ?string $created_at = null,
         public readonly ?string $updated_at = null
@@ -16,7 +16,7 @@ class CategoryDTO
     {
         return new self(
             name: $data['name'],
-            description: $data['description'],
+            description: $data['description']?? null,
             id: $data['id'] ?? null,
             created_at: $data['created_at'] ?? null,
             updated_at: $data['updated_at'] ?? null

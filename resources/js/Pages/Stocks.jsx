@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
 import Dashboard from './Dashboard';
+import Selector from '../Components/Selector';
 
 export default function Stocks() {
-  const [products, setProducts] = useState({ data: [], meta: null });
+  const [products, setProducts] = useState({ data: {items: [], links: []}, meta: null });
+  const [categories, setCategories] = useState({ data: {items: [], links: []}, meta: null });
+
   const [filters, setFilters] = useState({
     name: '',
     price: '',
@@ -16,13 +19,19 @@ export default function Stocks() {
     id: null,
     name: '',
     price: '',
-    category: '',
-    stock_quantity: '',
+    category_id: '',
+    quantity: '',
     sku: '',
     description: '',
   });
 
   const token = sessionStorage.getItem('token');
+  const user = JSON.parse(sessionStorage.getItem('user'));
+  const isUser = user && user.roles === 'user';
+  const isAdmin = user && user.roles === 'admin';
+  const isAdminOrOperator= user && user.roles === 'operator' || user.roles === 'admin' ;
+
+
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -45,27 +54,55 @@ export default function Stocks() {
     setLoading(false);
   };
 
+  const fetchCategories= async () => {
+    setLoading(true);
+
+    const response = await fetch(`/api/v1/categories?per_page=100`, {
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      setCategories(data);
+    } else {
+      console.error('Failed to fetch categories');
+    }
+  };
   useEffect(() => {
     fetchProducts();
   }, [filters]);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
-    setFilters((prev) => ({ ...prev, [name]: value, page: 1 }));
+    setFilters((prev) => ({ 
+      ...prev, 
+      [name]: name === 'price' ? parseFloat(value) || '' : value,
+      page: 1 
+    }));
   };
-
+  
   const handleFormChange = (e) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setForm((prev) => ({ 
+      ...prev, 
+      [name]: name === 'price' ? parseFloat(value) || '' : 
+              name === 'category_id' ? parseInt(value) || '' :
+              name === 'quantity' ? parseInt(value) || '' :
+              value 
+    }));
   };
 
   const handleCreate = () => {
+    fetchCategories();
     setForm({
       id: null,
       name: '',
       price: '',
-      category: '',
-      stock_quantity: '',
+      category_id: '',
+      quantity: '',
       sku: '',
       description: '',
     });
@@ -73,6 +110,7 @@ export default function Stocks() {
   };
 
   const handleEdit = (product) => {
+    fetchCategories();
     setForm(product);
     setShowModal(true);
   };
@@ -96,25 +134,62 @@ export default function Stocks() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const method = form.id ? 'PUT' : 'POST';
-    const url = form.id
-      ? `/api/v1/products/${form.id}`
-      : '/api/v1/products';
-
-    const response = await fetch(url, {
-      method,
+    
+    if (!form.id) {
+      const payload = {};
+      for (const key in form) {
+        if (form[key] !== '' && form[key] !== null) {
+          payload[key] = form[key];
+        }
+      }
+  
+      const response = await fetch('/api/v1/products', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+  
+      if (response.ok) {
+        setShowModal(false);
+        fetchProducts();
+      } else {
+        console.error('Failed to create product');
+      }
+      return;
+    }
+  
+    const originalProduct = products.data.items.find(p => p.id === form.id);
+    if (!originalProduct) return;
+  
+    const payload = {};
+    for (const key in form) {
+      if (form[key] !== originalProduct[key]) {
+        payload[key] = form[key];
+      }
+    }
+  
+    if (Object.keys(payload).length === 0) {
+      setShowModal(false);
+      return;
+    }
+  
+    const response = await fetch(`/api/v1/products/${form.id}`, {
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(form),
+      body: JSON.stringify(payload),
     });
-
+  
     if (response.ok) {
       setShowModal(false);
       fetchProducts();
     } else {
-      console.error('Failed to save product');
+      console.error('Failed to update product');
     }
   };
 
@@ -132,13 +207,15 @@ export default function Stocks() {
             onChange={handleFilterChange}
             className="p-2 border rounded"
           />
-          <input
+         <input
             type="number"
             name="price"
             placeholder="Filter by price"
             value={filters.price}
             onChange={handleFilterChange}
             className="p-2 border rounded"
+            step="0.01"
+            min="0"
           />
           <input
             type="text"
@@ -148,12 +225,12 @@ export default function Stocks() {
             onChange={handleFilterChange}
             className="p-2 border rounded"
           />
-          <button
+         {isAdmin &&  (<button
             onClick={handleCreate}
             className="bg-blue-500 text-white rounded px-4 py-2"
           >
             + New Product
-          </button>
+          </button>)}
         </div>
       </div>
 
@@ -168,44 +245,52 @@ export default function Stocks() {
                   <th className="px-4 py-2 text-left">Name</th>
                   <th className="px-4 py-2 text-left">Price</th>
                   <th className="px-4 py-2 text-left">Category</th>
-                  <th className="px-4 py-2 text-left">Stock</th>
+                  <th className="px-4 py-2 text-left">Quantity</th>
                   <th className="px-4 py-2 text-left">SKU</th>
                   <th className="px-4 py-2 text-left">Description</th>
-                  <th className="px-4 py-2 text-left">Actions</th>
+                  <th className="px-4 py-2 text-left">Created At</th>
+                  <th className="px-4 py-2 text-left">Updated At</th>
+                  {isAdminOrOperator && (<th className="px-4 py-2 text-left">Actions</th>)}
                 </tr>
               </thead>
               <tbody>
-                {products.data.length > 0 ? (
-                  products.data.map((product) => (
+                {products.data.items.length > 0 ? (
+                  products.data.items.map((product) => (
                     <tr key={product.id} className="border-t">
                       <td className="px-4 py-2">{product.name}</td>
-                      <td className="px-4 py-2">${product.price}</td>
+                      <td className="px-4 py-2">{product.price.toFixed(2)}</td>
                       <td className="px-4 py-2">
                         {product.category?.name || '—'}
                       </td>
-                      <td className="px-4 py-2">{product.stock_quantity}</td>
+                      <td className="px-4 py-2">{product.quantity}</td>
                       <td className="px-4 py-2">{product.sku}</td>
                       <td className="px-4 py-2">{product.description || '—'}</td>
-                      <td className="px-4 py-2 space-x-2">
+                      <td className="px-4 py-2">
+                        {new Date(product.created_at).toLocaleString()}
+                      </td>
+                      <td className="px-4 py-2">
+                        {new Date(product.updated_at).toLocaleString()}
+                      </td>
+                      {isAdminOrOperator && (<td className="px-4 py-2 space-x-2">
                         <button
                           onClick={() => handleEdit(product)}
                           className="text-blue-500"
                         >
                           Edit
                         </button>
-                        <button
+                        {isAdmin && ( <button
                           onClick={() => handleDelete(product.id)}
                           className="text-red-500"
                         >
                           Delete
-                        </button>
-                      </td>
+                        </button>)}
+                      </td>)}
                     </tr>
                   ))
                 ) : (
                   <tr>
                     <td
-                      colSpan="7"
+                      colSpan="9"
                       className="text-center px-4 py-4 text-gray-500"
                     >
                       No products found.
@@ -257,7 +342,7 @@ export default function Stocks() {
                 className="w-full p-2 border rounded"
                 required
               />
-              <input
+             <input
                 type="number"
                 name="price"
                 placeholder="Price"
@@ -265,18 +350,18 @@ export default function Stocks() {
                 onChange={handleFormChange}
                 className="w-full p-2 border rounded"
                 required
+                step="0.01"
+                min="0"
               />
-              <input
-                type="text"
-                name="category"
-                placeholder="Category"
-                value={form.category}
+              <Selector
+                
+                items={categories.data.items}
+                selectedId={form.category}
                 onChange={handleFormChange}
-                className="w-full p-2 border rounded"
               />
               <input
                 type="number"
-                name="stock_quantity"
+                name="quantity"
                 placeholder="Stock Quantity"
                 value={form.stock_quantity}
                 onChange={handleFormChange}
